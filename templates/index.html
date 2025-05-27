@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student ID Card Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Generate Student ID Card</h1>
+        <form id="idCardForm" action="/generate" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required placeholder="Enter student's full name">
+            </div>
+            <div class="form-group">
+                <label for="fname">Father's Name:</label>
+                <input type="text" id="fname" name="fname" required placeholder="Enter father's full name">
+            </div>
+            <div class="form-group">
+                <label for="roll_no">Roll No:</label>
+                <input type="text" id="roll_no" name="roll_no" required placeholder="e.g., 21CE001">
+            </div>
+            <div class="form-group">
+                <label for="branch">Branch:</label>
+                <input type="text" id="branch" name="branch" required placeholder="e.g., Computer Science Eng.">
+            </div>
+            <div class="form-group">
+                <label for="session">Session:</label>
+                <input type="text" id="session" name="session" required placeholder="e.g., 2021-2025">
+            </div>
+            <div class="form-group">
+                <label for="blood_group">Blood Group:</label>
+                <input type="text" id="blood_group" name="blood_group" required placeholder="e.g., O+, AB-">
+            </div>
+            <div class="form-group">
+                <label for="dob">Date of Birth (DD-MM-YYYY):</label>
+                <input type="text" id="dob" name="dob" required placeholder="DD-MM-YYYY">
+            </div>
+            <div class="form-group">
+                <label for="address">Address:</label>
+                <textarea id="address" name="address" rows="3" required placeholder="Enter student's address"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="photo">Student Photo:</label>
+                <input type="file" id="photo" name="photo" accept="image/*" required>
+            </div>
+            <button type="submit">Generate ID Card</button>
+        </form>
+
+        <div id="idCardDisplay">
+            </div>
+    </div>
+
+    <script>
+        // JavaScript to handle form submission with Fetch API
+        document.getElementById('idCardForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission (which would reload the page)
+
+            const formData = new FormData(this); // Get all form data, including the file
+
+            // Send the form data to the Flask backend
+            fetch('/generate', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.blob(); // If successful, get the response body as a Blob (binary data)
+                } else {
+                    // Handle server errors
+                    alert('Error generating ID card. Please check inputs and try again.');
+                    return Promise.reject('Server error occurred');
+                }
+            })
+            .then(blob => {
+                // Create a URL for the image Blob
+                const imageUrl = URL.createObjectURL(blob);
+                const idCardDisplay = document.getElementById('idCardDisplay');
+
+                // Clear any previous image
+                idCardDisplay.innerHTML = '';
+
+                // Create a new image element and set its source
+                const img = document.createElement('img');
+                img.src = imageUrl;
+                img.alt = 'Generated ID Card';
+                // Optional styling for the displayed image
+                img.style.maxWidth = '100%';
+                img.style.height = 'auto';
+                img.style.marginTop = '20px';
+                img.style.border = '1px solid #ccc';
+                img.style.boxShadow = '0 0 10px rgba(0,0,0,0.1)';
+
+                // Append the image to the display area
+                idCardDisplay.appendChild(img);
+
+                // Clean up the object URL after the image is loaded
+                // This prevents memory leaks, especially if many images are generated
+                img.onload = () => {
+                    URL.revokeObjectURL(imageUrl);
+                };
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+                alert('Network error or problem with server response. Check console for details.');
+            });
+        });
+    </script>
+</body>
+</html>
