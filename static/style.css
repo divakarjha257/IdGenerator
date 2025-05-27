@@ -5,27 +5,25 @@ body {
     padding: 0;
     display: flex;
     justify-content: center;
-    align-items: center; /* Changed from flex-start back to center for overall alignment */
+    align-items: flex-start; /* CRITICAL CHANGE: Allows content to start at the top and push the body height */
     min-height: 100vh; /* Ensures body is at least full viewport height */
-    /* REMOVED: overflow: hidden; */ /* This was the culprit */
-    background-color: #0d1a26; /* Slightly darker, more muted base background */
-    position: relative; /* For the z-index of glass-container, though fixed background won't use it directly */
-    color: #f0f0f0; /* Default very light text color for excellent contrast */
+    background-color: #0c0a1a;
+    position: relative;
+    color: #f0f0f0;
 }
 
-/* Animated Background Element */
+/* Animated Background Element - No changes needed here. 'position: fixed' is correct. */
 .background-animation {
-    /* CHANGED: position from 'absolute' to 'fixed' */
-    position: fixed; /* Makes it stay in the viewport while content scrolls */
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d, #1a2a6c); /* More dynamic color shifts */
+    background: linear-gradient(135deg, #2a0050, #4f006f, #0077b6, #00b4d8, #2a0050);
     background-size: 400% 400%;
-    animation: gradientShift 20s ease infinite; /* Slower, more serene animation */
-    z-index: -1; /* Puts it behind all other content */
-    opacity: 0.9; /* Slightly less opaque to allow base color to show through just a bit */
+    animation: gradientShift 25s ease infinite;
+    z-index: -1;
+    opacity: 0.95;
 }
 
 /* Keyframes for the continuous gradient animation */
@@ -37,25 +35,23 @@ body {
 
 /* Glass Container for the Form */
 .glass-container {
-    background: rgba(255, 255, 255, 0.15); /* From 0.08 to 0.15 */
-    border-radius: 18px; /* Slightly more rounded */
-    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.45); /* Increased blur and opacity */
-    backdrop-filter: blur(16px); /* Increased blur for a more frosted appearance */
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 18px;
+    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.3); /* From 0.18 to 0.3 */
+    border: 1px solid rgba(255, 255, 255, 0.3);
     width: 100%;
-    max-width: 700px; /* Slightly wider for better content spacing */
-    padding: 45px; /* More padding */
+    max-width: 700px;
+    padding: 45px;
     box-sizing: border-box;
-    margin: 25px auto; /* Centering with margin auto for horizontal */
+    margin: 25px auto; /* This handles horizontal centering and provides vertical spacing */
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
     animation: fadeInContainer 1s ease-out;
-    /* Added min-height to ensure it takes up space, but doesn't prevent scrolling */
-    min-height: calc(100vh - 50px); /* Adjust based on your padding */
-    display: flex; /* Use flexbox to center content vertically within glass-container if needed */
-    flex-direction: column;
-    justify-content: center; /* Center content vertically */
-    align-items: center; /* Center content horizontally */
+    /* REMOVED: min-height: calc(100vh - 50px); - Let content dictate height */
+    /* REMOVED: display: flex; flex-direction: column; justify-content: center; align-items: center;
+       These flex properties prevented natural content flow for scrolling within the container. */
+    /* Content inside will now flow naturally as block elements */
 }
 
 /* Animation for the container itself to fade in on page load */
@@ -65,73 +61,79 @@ body {
 }
 
 .glass-container:hover {
-    transform: translateY(-10px); /* More pronounced lift on hover */
-    box-shadow: 0 16px 50px rgba(0, 0, 0, 0.6); /* Even stronger shadow on hover */
+    transform: translateY(-10px);
+    box-shadow: 0 16px 50px rgba(0, 0, 0, 0.6);
 }
+
+/* The .content div within .glass-container can help manage overall internal spacing */
+.content {
+    /* Add any general content styling here if needed, but no flex centering that restricts scrolling */
+}
+
 
 /* Heading Styling */
 h1 {
     text-align: center;
-    color: #e6e6e6; /* Brighter white for better visibility */
-    margin-bottom: 40px; /* More space below heading */
-    font-size: 3em; /* Larger heading */
-    border-bottom: 3px solid #5c67f2; /* Thicker border */
-    padding-bottom: 20px; /* More padding below border */
+    color: #e6e6e6;
+    margin-bottom: 40px;
+    font-size: 3em;
+    border-bottom: 3px solid #7b68ee;
+    padding-bottom: 20px;
     transition: color 0.3s ease;
-    text-shadow: 0 0 15px rgba(92, 103, 242, 0.7); /* Stronger glow */
+    text-shadow: 0 0 15px rgba(123, 104, 238, 0.7);
 }
 
 h1:hover {
-    color: #ffffff; /* Pure white on hover */
+    color: #ffffff;
 }
 
 /* Form Group Styling */
 .form-group {
-    margin-bottom: 30px; /* More spacing between form groups */
-    width: 100%; /* Ensure form groups take full width of parent */
+    margin-bottom: 30px;
+    width: 100%; /* Ensures form groups take full width of parent */
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 12px; /* More space below label */
-    color: #c0c0c0; /* Brighter grey for labels */
+    margin-bottom: 12px;
+    color: #c0c0c0;
     font-weight: bold;
-    font-size: 1.2em; /* Larger labels */
+    font-size: 1.2em;
     transition: color 0.3s ease;
 }
 
 .form-group label:hover {
-    color: #ffffff; /* White on hover */
+    color: #ffffff;
 }
 
 /* Input Fields and Textarea Styling */
 .form-group input[type="text"],
 .form-group textarea,
 .form-group input[type="file"] {
-    width: calc(100% - 28px); /* Adjusted for padding + border */
-    padding: 14px; /* More padding for larger inputs */
-    border: 1px solid rgba(255, 255, 255, 0.4); /* Stronger white border */
-    border-radius: 10px; /* More rounded corners */
-    font-size: 1.1em; /* Larger text in inputs */
-    background-color: rgba(255, 255, 255, 0.1); /* Slightly more opaque background */
-    color: #f0f0f0; /* Very light text color for input values */
-    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2); /* Deeper inner shadow */
+    width: calc(100% - 28px);
+    padding: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 10px;
+    font-size: 1.1em;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #f0f0f0;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
     transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out, background-color 0.3s ease;
 }
 
 /* Placeholder text color */
 .form-group input::placeholder,
 .form-group textarea::placeholder {
-    color: #909090; /* Clearer placeholder text */
+    color: #909090;
 }
 
 /* Focus state for inputs and textarea */
 .form-group input[type="text"]:focus,
 .form-group textarea:focus,
 .form-group input[type="file"]:focus {
-    border-color: #87ceeb; /* Sky blue border on focus */
-    box-shadow: 0 0 0 0.3rem rgba(135, 206, 235, 0.4), inset 0 2px 5px rgba(0, 0, 0, 0.3); /* Stronger focus glow */
-    background-color: rgba(255, 255, 255, 0.15); /* Even more opaque background on focus */
+    border-color: #9370db;
+    box-shadow: 0 0 0 0.3rem rgba(147, 112, 219, 0.4), inset 0 2px 5px rgba(0, 0, 0, 0.3);
+    background-color: rgba(255, 255, 255, 0.15);
     outline: none;
 }
 
@@ -141,56 +143,56 @@ h1:hover {
 
 /* Generic Button Styling (applied to both submit and download) */
 .button {
-    background-color: #6a5acd; /* A rich, deep purple */
+    background-color: #7b68ee;
     color: white;
-    padding: 16px 35px; /* Larger buttons */
+    padding: 16px 35px;
     border: none;
-    border-radius: 10px; /* More rounded */
+    border-radius: 10px;
     cursor: pointer;
-    font-size: 1.3em; /* Larger font */
+    font-size: 1.3em;
     width: 100%;
     margin-top: 35px;
-    text-decoration: none; /* Removes underline for the download link */
-    display: block; /* Makes it a block element to take full width by default */
+    text-decoration: none;
+    display: block;
     text-align: center;
     transition: background-color 0.3s ease, transform 0.2s ease-in-out, box-shadow 0.3s ease;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); /* Stronger shadow */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
 }
 
 .button:hover {
-    background-color: #5c4eb5; /* Darker purple on hover */
-    transform: translateY(-3px); /* Lifts the button slightly */
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.4); /* Stronger shadow on hover */
+    background-color: #6a5acd;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.4);
 }
 
 /* Specific styling for the Generate button (using class from HTML) */
 .submit-button.loading {
-    background-color: #888888; /* Grey out when loading */
+    background-color: #888888;
     cursor: not-allowed;
     animation: pulse 1s infinite alternate;
 }
 
 /* Specific styling for the Download button */
 .download-button {
-    background-color: #3cb371; /* Medium Sea Green for download */
+    background-color: #3cb371;
     width: fit-content;
-    margin: 35px auto 0; /* Centered with more margin */
+    margin: 35px auto 0;
     display: none;
 }
 
 .download-button:hover {
-    background-color: #2e8b57; /* Darker green on hover */
+    background-color: #2e8b57;
 }
 
 /* ID Card Display Area */
 #idCardDisplay {
-    margin-top: 50px; /* More space from form */
+    margin-top: 50px;
     text-align: center;
     opacity: 0;
-    transform: translateY(30px); /* Starts lower */
-    transition: opacity 0.7s ease-out, transform 0.7s ease-out; /* Slower, smoother transition */
-    padding-top: 40px; /* More padding above separator */
-    border-top: 1px solid rgba(255, 255, 255, 0.15); /* Slightly more visible separator */
+    transform: translateY(30px);
+    transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 /* Class added by JS to trigger the fade-in animation */
@@ -202,7 +204,7 @@ h1:hover {
 #idCardDisplay img {
     max-width: 100%;
     height: auto;
-    border-radius: 12px; /* Even more rounded corners for image */
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.45); /* Much stronger shadow for the image */
-    border: 4px solid rgba(255, 255, 255, 0.3); /* More visible border around the image */
+    border-radius: 12px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.45);
+    border: 4px solid rgba(255, 255, 255, 0.3);
 }
