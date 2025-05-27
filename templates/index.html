@@ -7,104 +7,133 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h1>Generate Student ID Card</h1>
-        <form id="idCardForm" action="/generate" method="POST" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="name">Name:</label>
-                <input type="text" id="name" name="name" required placeholder="Enter student's full name">
-            </div>
-            <div class="form-group">
-                <label for="fname">Father's Name:</label>
-                <input type="text" id="fname" name="fname" required placeholder="Enter father's full name">
-            </div>
-            <div class="form-group">
-                <label for="roll_no">Roll No:</label>
-                <input type="text" id="roll_no" name="roll_no" required placeholder="e.g., 21CE001">
-            </div>
-            <div class="form-group">
-                <label for="branch">Branch:</label>
-                <input type="text" id="branch" name="branch" required placeholder="e.g., Computer Science Eng.">
-            </div>
-            <div class="form-group">
-                <label for="session">Session:</label>
-                <input type="text" id="session" name="session" required placeholder="e.g., 2021-2025">
-            </div>
-            <div class="form-group">
-                <label for="blood_group">Blood Group:</label>
-                <input type="text" id="blood_group" name="blood_group" required placeholder="e.g., O+, AB-">
-            </div>
-            <div class="form-group">
-                <label for="dob">Date of Birth (DD-MM-YYYY):</label>
-                <input type="text" id="dob" name="dob" required placeholder="DD-MM-YYYY">
-            </div>
-            <div class="form-group">
-                <label for="address">Address:</label>
-                <textarea id="address" name="address" rows="3" required placeholder="Enter student's address"></textarea>
-            </div>
-            <div class="form-group">
-                <label for="photo">Student Photo:</label>
-                <input type="file" id="photo" name="photo" accept="image/*" required>
-            </div>
-            <button type="submit">Generate ID Card</button>
-        </form>
+    <div class="background-animation"></div>
 
-        <div id="idCardDisplay">
-            </div>
+    <div class="glass-container">
+        <div class="content">
+            <h1>Generate Student ID Card</h1>
+            
+            <form id="idCardForm" action="/generate" method="POST" enctype="multipart/form-data">
+                
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required placeholder="Enter student's full name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="fname">Father's Name:</label>
+                    <input type="text" id="fname" name="fname" required placeholder="Enter father's full name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="roll_no">Roll No:</label>
+                    <input type="text" id="roll_no" name="roll_no" required placeholder="e.g., 21CE001">
+                </div>
+                
+                <div class="form-group">
+                    <label for="branch">Branch:</label>
+                    <input type="text" id="branch" name="branch" required placeholder="e.g., Computer Science Eng.">
+                </div>
+                
+                <div class="form-group">
+                    <label for="session">Session:</label>
+                    <input type="text" id="session" name="session" required placeholder="e.g., 2021-2025">
+                </div>
+                
+                <div class="form-group">
+                    <label for="blood_group">Blood Group:</label>
+                    <input type="text" id="blood_group" name="blood_group" required placeholder="e.g., O+, AB-">
+                </div>
+                
+                <div class="form-group">
+                    <label for="dob">Date of Birth (DD-MM-YYYY):</label>
+                    <input type="text" id="dob" name="dob" required placeholder="DD-MM-YYYY">
+                </div>
+                
+                <div class="form-group">
+                    <label for="address">Address:</label>
+                    <textarea id="address" name="address" rows="3" required placeholder="Enter student's address"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="photo">Student Photo:</label>
+                    <input type="file" id="photo" name="photo" accept="image/*" required>
+                </div>
+                
+                <button type="submit" class="button submit-button">Generate ID Card</button>
+            </form>
+
+            <div id="idCardDisplay">
+                </div>
+            
+            <a id="downloadButton" style="display:none;" class="button download-button">Download ID Card</a>
+        </div>
     </div>
 
     <script>
-        // JavaScript to handle form submission with Fetch API
+        // JavaScript to handle form submission and display the ID card
         document.getElementById('idCardForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent the default form submission (which would reload the page)
+            event.preventDefault(); // Stop the default form submission (prevents page reload)
 
-            const formData = new FormData(this); // Get all form data, including the file
+            const formData = new FormData(this); // Collects all form data, including the file
+            const idCardDisplay = document.getElementById('idCardDisplay');
+            const downloadButton = document.getElementById('downloadButton');
+            const submitButton = document.querySelector('.submit-button'); // Select the submit button
 
-            // Send the form data to the Flask backend
+            // --- Show Loading State & Reset Display ---
+            submitButton.textContent = 'Generating...'; // Change button text
+            submitButton.disabled = true; // Disable button to prevent multiple submissions
+            submitButton.classList.add('loading'); // Add loading class for CSS animation
+
+            idCardDisplay.innerHTML = ''; // Clear any previously displayed image
+            idCardDisplay.classList.remove('show'); // Remove 'show' class to reset animation
+            downloadButton.style.display = 'none'; // Hide the download button
+
+            // --- Send Data to Flask Backend ---
             fetch('/generate', {
                 method: 'POST',
                 body: formData
             })
             .then(response => {
                 if (response.ok) {
-                    return response.blob(); // If successful, get the response body as a Blob (binary data)
+                    return response.blob(); // If successful, get the response as binary data (image)
                 } else {
-                    // Handle server errors
+                    // Handle server-side errors
                     alert('Error generating ID card. Please check inputs and try again.');
-                    return Promise.reject('Server error occurred');
+                    return Promise.reject('Server error occurred'); // Propagate error
                 }
             })
             .then(blob => {
-                // Create a URL for the image Blob
-                const imageUrl = URL.createObjectURL(blob);
-                const idCardDisplay = document.getElementById('idCardDisplay');
+                // --- Display Generated ID Card ---
+                const imageUrl = URL.createObjectURL(blob); // Create a temporary URL for the image Blob
+                
+                const img = document.createElement('img'); // Create a new image element
+                img.src = imageUrl; // Set its source
+                img.alt = 'Generated ID Card'; // Add alt text for accessibility
 
-                // Clear any previous image
-                idCardDisplay.innerHTML = '';
+                idCardDisplay.appendChild(img); // Add the image to the display area
+                idCardDisplay.classList.add('show'); // Add 'show' class to trigger CSS fade-in animation
 
-                // Create a new image element and set its source
-                const img = document.createElement('img');
-                img.src = imageUrl;
-                img.alt = 'Generated ID Card';
-                // Optional styling for the displayed image
-                img.style.maxWidth = '100%';
-                img.style.height = 'auto';
-                img.style.marginTop = '20px';
-                img.style.border = '1px solid #ccc';
-                img.style.boxShadow = '0 0 10px rgba(0,0,0,0.1)';
+                // --- Enable Download Button ---
+                downloadButton.href = imageUrl; // Set the download link's URL
+                downloadButton.download = 'student_id_card.jpg'; // Suggest a filename for download
+                downloadButton.style.display = 'inline-block'; // Make the download button visible
 
-                // Append the image to the display area
-                idCardDisplay.appendChild(img);
-
-                // Clean up the object URL after the image is loaded
-                // This prevents memory leaks, especially if many images are generated
+                // Clean up the object URL after the image has loaded to prevent memory leaks
                 img.onload = () => {
                     URL.revokeObjectURL(imageUrl);
                 };
             })
             .catch(error => {
+                // --- Handle Network/Fetch Errors ---
                 console.error('There was a problem with the fetch operation:', error);
                 alert('Network error or problem with server response. Check console for details.');
+            })
+            .finally(() => {
+                // --- Reset Submit Button State (Always Runs) ---
+                submitButton.textContent = 'Generate ID Card'; // Reset button text
+                submitButton.disabled = false; // Re-enable button
+                submitButton.classList.remove('loading'); // Remove loading class
             });
         });
     </script>

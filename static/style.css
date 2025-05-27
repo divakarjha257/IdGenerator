@@ -1,98 +1,208 @@
+/* General Body & Background Animation */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #eef1f5;
+    margin: 0;
+    padding: 0;
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* Align to the top */
-    min-height: 100vh;
-    margin: 0;
-    padding: 20px;
-    box-sizing: border-box;
+    align-items: center; /* Changed from flex-start back to center for overall alignment */
+    min-height: 100vh; /* Ensures body is at least full viewport height */
+    /* REMOVED: overflow: hidden; */ /* This was the culprit */
+    background-color: #0d1a26; /* Slightly darker, more muted base background */
+    position: relative; /* For the z-index of glass-container, though fixed background won't use it directly */
+    color: #f0f0f0; /* Default very light text color for excellent contrast */
 }
 
-.container {
-    background-color: #ffffff;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+/* Animated Background Element */
+.background-animation {
+    /* CHANGED: position from 'absolute' to 'fixed' */
+    position: fixed; /* Makes it stay in the viewport while content scrolls */
+    top: 0;
+    left: 0;
     width: 100%;
-    max-width: 650px;
-    box-sizing: border-box;
+    height: 100%;
+    background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d, #1a2a6c); /* More dynamic color shifts */
+    background-size: 400% 400%;
+    animation: gradientShift 20s ease infinite; /* Slower, more serene animation */
+    z-index: -1; /* Puts it behind all other content */
+    opacity: 0.9; /* Slightly less opaque to allow base color to show through just a bit */
 }
 
+/* Keyframes for the continuous gradient animation */
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Glass Container for the Form */
+.glass-container {
+    background: rgba(255, 255, 255, 0.15); /* From 0.08 to 0.15 */
+    border-radius: 18px; /* Slightly more rounded */
+    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.45); /* Increased blur and opacity */
+    backdrop-filter: blur(16px); /* Increased blur for a more frosted appearance */
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.3); /* From 0.18 to 0.3 */
+    width: 100%;
+    max-width: 700px; /* Slightly wider for better content spacing */
+    padding: 45px; /* More padding */
+    box-sizing: border-box;
+    margin: 25px auto; /* Centering with margin auto for horizontal */
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    animation: fadeInContainer 1s ease-out;
+    /* Added min-height to ensure it takes up space, but doesn't prevent scrolling */
+    min-height: calc(100vh - 50px); /* Adjust based on your padding */
+    display: flex; /* Use flexbox to center content vertically within glass-container if needed */
+    flex-direction: column;
+    justify-content: center; /* Center content vertically */
+    align-items: center; /* Center content horizontally */
+}
+
+/* Animation for the container itself to fade in on page load */
+@keyframes fadeInContainer {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.glass-container:hover {
+    transform: translateY(-10px); /* More pronounced lift on hover */
+    box-shadow: 0 16px 50px rgba(0, 0, 0, 0.6); /* Even stronger shadow on hover */
+}
+
+/* Heading Styling */
 h1 {
     text-align: center;
-    color: #2c3e50;
-    margin-bottom: 30px;
-    font-size: 2.2em;
-    border-bottom: 2px solid #5c67f2;
-    padding-bottom: 10px;
+    color: #e6e6e6; /* Brighter white for better visibility */
+    margin-bottom: 40px; /* More space below heading */
+    font-size: 3em; /* Larger heading */
+    border-bottom: 3px solid #5c67f2; /* Thicker border */
+    padding-bottom: 20px; /* More padding below border */
+    transition: color 0.3s ease;
+    text-shadow: 0 0 15px rgba(92, 103, 242, 0.7); /* Stronger glow */
 }
 
+h1:hover {
+    color: #ffffff; /* Pure white on hover */
+}
+
+/* Form Group Styling */
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 30px; /* More spacing between form groups */
+    width: 100%; /* Ensure form groups take full width of parent */
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 8px;
-    color: #34495e;
+    margin-bottom: 12px; /* More space below label */
+    color: #c0c0c0; /* Brighter grey for labels */
     font-weight: bold;
-    font-size: 1.1em;
+    font-size: 1.2em; /* Larger labels */
+    transition: color 0.3s ease;
 }
 
+.form-group label:hover {
+    color: #ffffff; /* White on hover */
+}
+
+/* Input Fields and Textarea Styling */
 .form-group input[type="text"],
 .form-group textarea,
 .form-group input[type="file"] {
-    width: calc(100% - 20px); /* Account for padding */
-    padding: 10px;
-    border: 1px solid #ced4da;
-    border-radius: 5px;
-    font-size: 1em;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
-    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    width: calc(100% - 28px); /* Adjusted for padding + border */
+    padding: 14px; /* More padding for larger inputs */
+    border: 1px solid rgba(255, 255, 255, 0.4); /* Stronger white border */
+    border-radius: 10px; /* More rounded corners */
+    font-size: 1.1em; /* Larger text in inputs */
+    background-color: rgba(255, 255, 255, 0.1); /* Slightly more opaque background */
+    color: #f0f0f0; /* Very light text color for input values */
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2); /* Deeper inner shadow */
+    transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out, background-color 0.3s ease;
 }
 
+/* Placeholder text color */
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: #909090; /* Clearer placeholder text */
+}
+
+/* Focus state for inputs and textarea */
 .form-group input[type="text"]:focus,
 .form-group textarea:focus,
 .form-group input[type="file"]:focus {
-    border-color: #5c67f2;
-    box-shadow: 0 0 0 0.2rem rgba(92, 103, 242, 0.25);
+    border-color: #87ceeb; /* Sky blue border on focus */
+    box-shadow: 0 0 0 0.3rem rgba(135, 206, 235, 0.4), inset 0 2px 5px rgba(0, 0, 0, 0.3); /* Stronger focus glow */
+    background-color: rgba(255, 255, 255, 0.15); /* Even more opaque background on focus */
     outline: none;
 }
 
 .form-group textarea {
-    resize: vertical; /* Allow vertical resizing */
+    resize: vertical;
 }
 
-button[type="submit"] {
-    background-color: #5c67f2;
+/* Generic Button Styling (applied to both submit and download) */
+.button {
+    background-color: #6a5acd; /* A rich, deep purple */
     color: white;
-    padding: 12px 25px;
+    padding: 16px 35px; /* Larger buttons */
     border: none;
-    border-radius: 5px;
+    border-radius: 10px; /* More rounded */
     cursor: pointer;
-    font-size: 1.2em;
+    font-size: 1.3em; /* Larger font */
     width: 100%;
-    margin-top: 25px;
-    transition: background-color 0.3s ease;
-}
-
-button[type="submit"]:hover {
-    background-color: #4a54e1;
-}
-
-#idCardDisplay {
-    margin-top: 40px;
+    margin-top: 35px;
+    text-decoration: none; /* Removes underline for the download link */
+    display: block; /* Makes it a block element to take full width by default */
     text-align: center;
-    border-top: 1px solid #e0e0e0;
-    padding-top: 30px;
+    transition: background-color 0.3s ease, transform 0.2s ease-in-out, box-shadow 0.3s ease;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); /* Stronger shadow */
+}
+
+.button:hover {
+    background-color: #5c4eb5; /* Darker purple on hover */
+    transform: translateY(-3px); /* Lifts the button slightly */
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.4); /* Stronger shadow on hover */
+}
+
+/* Specific styling for the Generate button (using class from HTML) */
+.submit-button.loading {
+    background-color: #888888; /* Grey out when loading */
+    cursor: not-allowed;
+    animation: pulse 1s infinite alternate;
+}
+
+/* Specific styling for the Download button */
+.download-button {
+    background-color: #3cb371; /* Medium Sea Green for download */
+    width: fit-content;
+    margin: 35px auto 0; /* Centered with more margin */
+    display: none;
+}
+
+.download-button:hover {
+    background-color: #2e8b57; /* Darker green on hover */
+}
+
+/* ID Card Display Area */
+#idCardDisplay {
+    margin-top: 50px; /* More space from form */
+    text-align: center;
+    opacity: 0;
+    transform: translateY(30px); /* Starts lower */
+    transition: opacity 0.7s ease-out, transform 0.7s ease-out; /* Slower, smoother transition */
+    padding-top: 40px; /* More padding above separator */
+    border-top: 1px solid rgba(255, 255, 255, 0.15); /* Slightly more visible separator */
+}
+
+/* Class added by JS to trigger the fade-in animation */
+#idCardDisplay.show {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 #idCardDisplay img {
-    max-width: 100%; /* Ensures image is responsive */
+    max-width: 100%;
     height: auto;
-    border: 5px solid #f8f9fa; /* Light border around the image */
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); /* Stronger shadow */
-    border-radius: 8px;
+    border-radius: 12px; /* Even more rounded corners for image */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.45); /* Much stronger shadow for the image */
+    border: 4px solid rgba(255, 255, 255, 0.3); /* More visible border around the image */
 }
